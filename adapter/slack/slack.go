@@ -138,6 +138,11 @@ func (a *adapter) Receive(msg *hal.Message) error {
 
 		if a.inChannels(msg.Room) {
 			hal.Logger.Debugf("slack - %s in whitelist", msg.Room)
+			if msg.Room == a.botname {
+				hal.Logger.Debugf("slack - recieved direct message to bot, reply to %v", msg.User)
+				msg.Room = msg.User.Name
+				msg.Text = fmt.Sprintf("%s: %s", a.botname, msg.Text)
+			}
 			hal.Logger.Debug("slack - adapter sent message to robot")
 			return a.Robot.Receive(msg)
 		}
